@@ -1,9 +1,43 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import Button from '@/components/ui-custom/Button';
 import MCQQuestion from './question-types/MCQQuestion';
 import FillInBlankQuestion from './question-types/FillInBlankQuestion';
 import MediaQuestion from './question-types/MediaQuestion';
+import DragTheWordsQuestion from './question-types/DragTheWordsQuestion';
+
+// Icône ChevronLeft
+const ChevronLeftIcon = (props) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={props.size || 16} 
+    height={props.size || 16} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="m15 18-6-6 6-6" />
+  </svg>
+);
+
+// Icône ChevronRight
+const ChevronRightIcon = (props) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={props.size || 16} 
+    height={props.size || 16} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="m9 18 6-6-6-6" />
+  </svg>
+);
 
 const ExerciseRenderer = ({ 
   exercise, 
@@ -13,13 +47,33 @@ const ExerciseRenderer = ({
   submitting,
   themeColor = "#0891b2", // Default teal color
 }) => {
-  const allQuestionsAnswered = exercise.questions.every(
-    question => userAnswers[question.id] !== undefined
-  );
+  const [currentStep, setCurrentStep] = useState(0);
   
-  const renderQuestion = (question, index) => {
+  const isCurrentQuestionAnswered = () => {
+    const currentQuestion = exercise.questions[currentStep];
+    return userAnswers[currentQuestion.id] !== undefined && 
+           (currentQuestion.type !== 'fill-in-blank' || userAnswers[currentQuestion.id].trim() !== '');
+  };
+  
+  const isLastStep = currentStep === exercise.questions.length - 1;
+  const isFirstStep = currentStep === 0;
+  
+  const handleNext = () => {
+    if (isLastStep) {
+      onSubmit();
+    } else {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+  
+  const handlePrevious = () => {
+    setCurrentStep(prev => Math.max(0, prev - 1));
+  };
+  
+  const renderQuestion = (question) => {
     switch (question.type) {
       case 'mcq':
+      case 'multiple_choice':
         return (
           <MCQQuestion
             key={question.id}
@@ -31,11 +85,23 @@ const ExerciseRenderer = ({
         );
         
       case 'fill-in-blank':
+      case 'fill_in_the_blanks':
         return (
           <FillInBlankQuestion
             key={question.id}
             question={question}
             value={userAnswers[question.id] || ''}
+            onChange={(answer) => onAnswerChange(question.id, answer)}
+            themeColor={themeColor}
+          />
+        );
+        
+      case 'drag_the_words':
+        return (
+          <DragTheWordsQuestion
+            key={question.id}
+            question={question}
+            value={userAnswers[question.id] || []}
             onChange={(answer) => onAnswerChange(question.id, answer)}
             themeColor={themeColor}
           />
@@ -67,26 +133,60 @@ const ExerciseRenderer = ({
     color: "#ffffff",
   };
 
+  const currentQuestion = exercise.questions[currentStep];
+
   return (
     <div className="space-y-8">
-      {exercise.questions.map(renderQuestion)}
+      {/* Progression indicator */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-sm text-gray-500">
+          Question {currentStep + 1} sur {exercise.questions.length}
+        </div>
+        <div className="w-2/3 bg-gray-200 rounded-full h-2.5">
+          <div 
+            className="h-2.5 rounded-full" 
+            style={{
+              width: `${((currentStep + 1) / exercise.questions.length) * 100}%`,
+              backgroundColor: themeColor
+            }}
+          ></div>
+        </div>
+      </div>
       
-      <div className="mt-8 flex justify-end items-center">
-        <div className="mr-4">
-          {!allQuestionsAnswered && (
-            <p className="text-yellow-600">
-              Please answer all questions before submitting.
+      {/* Current question */}
+      {renderQuestion(currentQuestion)}
+      
+      {/* Navigation buttons */}
+      <div className="mt-8 flex justify-between items-center">
+        {!isFirstStep && (
+          <Button
+            onClick={handlePrevious}
+            variant="outline"
+            className="flex items-center gap-1"
+          >
+            <ChevronLeftIcon size={16} />
+            Précédent
+          </Button>
+        )}
+        
+        {isFirstStep && <div />} {/* Empty div placeholder to maintain flex layout */}
+        
+        <div className="flex-grow text-center">
+          {!isCurrentQuestionAnswered() && (
+            <p className="text-yellow-600 text-sm">
+              Veuillez répondre à cette question avant de continuer
             </p>
           )}
         </div>
         
         <Button
-          onClick={onSubmit}
-          disabled={!allQuestionsAnswered || submitting}
+          onClick={handleNext}
+          disabled={!isCurrentQuestionAnswered() || submitting}
           style={buttonStyle}
-          className="px-8 py-2 rounded-md hover:opacity-90 transition-opacity duration-200"
+          className="px-8 py-2 rounded-md hover:opacity-90 transition-opacity duration-200 flex items-center gap-1"
         >
-          {submitting ? 'Submitting...' : 'Next'}
+          {submitting ? 'Envoi en cours...' : isLastStep ? 'Évaluer mes réponses' : 'Suivant'}
+          {!isLastStep && <ChevronRightIcon size={16} />}
         </Button>
       </div>
     </div>

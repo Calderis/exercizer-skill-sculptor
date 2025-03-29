@@ -1,7 +1,4 @@
-
 import React from 'react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 
 const MediaQuestion = ({ question, value, onChange, themeColor = "#0891b2" }) => {
   const renderMedia = () => {
@@ -46,37 +43,34 @@ const MediaQuestion = ({ question, value, onChange, themeColor = "#0891b2" }) =>
     }
   };
 
-  const radioStyles = {
-    accentColor: themeColor,
-  };
-
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
       {renderMedia()}
       
       <h3 className="text-lg font-medium text-gray-900 mb-4">{question.prompt}</h3>
       
-      <RadioGroup 
-        value={value} 
-        onValueChange={onChange}
-        className="space-y-3"
-      >
+      <div className="space-y-3">
         {question.options.map((option, index) => (
           <div key={index} className="flex items-center space-x-2">
-            <RadioGroupItem 
+            <input 
+              type="radio" 
               id={`${question.id}-option-${index}`} 
+              name={`question-${question.id}`}
               value={option}
-              style={radioStyles}
+              checked={value === option}
+              onChange={() => onChange(option)}
+              className="h-4 w-4 cursor-pointer"
+              style={{ accentColor: themeColor }}
             />
-            <Label 
+            <label 
               htmlFor={`${question.id}-option-${index}`}
               className="text-base cursor-pointer"
             >
               {option}
-            </Label>
+            </label>
           </div>
         ))}
-      </RadioGroup>
+      </div>
     </div>
   );
 };

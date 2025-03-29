@@ -1,16 +1,36 @@
-
 import React, { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast-custom';
 import { fetchExercise, submitAnswers, logResult } from './api';
 import LoadingState from './LoadingState';
 import ExerciseRenderer from './ExerciseRenderer';
 import FeedbackDisplay from './FeedbackDisplay';
 import RetryPrompt from './RetryPrompt';
-import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import Button from '@/components/ui-custom/Button';
+
+// Icône RefreshCw
+const RefreshCwIcon = (props) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={props.size || 16} 
+    height={props.size || 16} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+    <path d="M21 3v5h-5" />
+    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+    <path d="M3 21v-5h5" />
+  </svg>
+);
 
 const Exercizer = ({ 
   subject, 
+  context,
+  contentType,
   onComplete,
   themeColor = "#0891b2" // Default teal color
 }) => {
@@ -35,16 +55,24 @@ const Exercizer = ({
     setEvaluation(null);
     
     try {
-      const data = await fetchExercise(subject);
+      const data = await fetchExercise(subject, context, contentType);
       setExercise(data);
+      
+      // Sauvegarder l'exercice dans sessionStorage pour une utilisation ultérieure
+      try {
+        sessionStorage.setItem('current_exercise', JSON.stringify(data));
+      } catch (error) {
+        console.error("Erreur lors de la sauvegarde de l'exercice dans sessionStorage:", error);
+      }
+      
       setCurrentStep('exercise');
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load exercise. Please try again.",
+        title: "Erreur",
+        description: "Impossible de charger l'exercice. Veuillez réessayer.",
         variant: "destructive"
       });
-      console.error("Error fetching exercise:", error);
+      console.error("Erreur lors du chargement de l'exercice:", error);
     } finally {
       setLoading(false);
     }
@@ -67,11 +95,11 @@ const Exercizer = ({
       setCurrentStep('feedback');
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit answers. Please try again.",
+        title: "Erreur",
+        description: "Impossible de soumettre les réponses. Veuillez réessayer.",
         variant: "destructive"
       });
-      console.error("Error submitting answers:", error);
+      console.error("Erreur lors de la soumission des réponses:", error);
     } finally {
       setSubmitting(false);
     }
@@ -79,6 +107,10 @@ const Exercizer = ({
 
   const handleRetry = (retry) => {
     if (retry) {
+      toast({
+        title: "Redémarrage de l'exercice",
+        description: "Chargement de nouvelles questions..."
+      });
       loadExercise();
     } else {
       // Log final result and notify completion
@@ -93,18 +125,10 @@ const Exercizer = ({
       }
       
       toast({
-        title: "Exercise Completed",
-        description: `You've completed this ${subject} exercise.`
+        title: "Exercice terminé",
+        description: `Vous avez terminé cet exercice de ${subject}.`
       });
     }
-  };
-
-  const handleRestart = () => {
-    toast({
-      title: "Restarting Exercise",
-      description: "Loading new questions..."
-    });
-    loadExercise();
   };
 
   // Custom styling based on theme color
@@ -115,9 +139,6 @@ const Exercizer = ({
     },
     iconButton: {
       color: themeColor,
-    },
-    container: {
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
     }
   };
 
@@ -161,40 +182,27 @@ const Exercizer = ({
         );
       
       default:
-        return <div>Something went wrong</div>;
+        return <div>Une erreur s'est produite</div>;
     }
   };
 
+
   return (
-    <div 
-      className="exercizer-container w-full max-w-3xl mx-auto p-6 bg-white rounded-lg"
-      style={customStyles.container}
-    >
+    <div  className="exercizer-container w-full max-w-3xl mx-auto p-6 bg-white">
+      
+      <div className="exercizer-content">
+        {renderContent()}
+      </div>
+
       <div className="exercizer-header mb-8 flex justify-between items-center">
-        <div style={customStyles.header}>
+        {/* <div style={customStyles.header}>
           <h2 className="text-2xl font-bold text-gray-800">
-            {exercise?.title || `${subject} Exercise`}
+            {exercise?.title || `Exercice de ${subject}`}
           </h2>
           {exercise?.description && (
             <p className="text-gray-600 mt-2">{exercise.description}</p>
           )}
-        </div>
-        
-        {exerciseCompleted && (
-          <Button 
-            variant="outline" 
-            onClick={handleRestart}
-            className="flex items-center gap-2 border-gray-200"
-            style={customStyles.iconButton}
-          >
-            <RefreshCw size={16} />
-            New Questions
-          </Button>
-        )}
-      </div>
-      
-      <div className="exercizer-content">
-        {renderContent()}
+        </div> */}
       </div>
     </div>
   );
