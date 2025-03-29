@@ -3,7 +3,7 @@ import React from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
-const MediaQuestion = ({ question, value, onChange }) => {
+const MediaQuestion = ({ question, value, onChange, themeColor = "#0891b2" }) => {
   const renderMedia = () => {
     switch (question.mediaType) {
       case 'image':
@@ -46,6 +46,10 @@ const MediaQuestion = ({ question, value, onChange }) => {
     }
   };
 
+  const radioStyles = {
+    accentColor: themeColor,
+  };
+
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
       {renderMedia()}
@@ -61,7 +65,8 @@ const MediaQuestion = ({ question, value, onChange }) => {
           <div key={index} className="flex items-center space-x-2">
             <RadioGroupItem 
               id={`${question.id}-option-${index}`} 
-              value={option} 
+              value={option}
+              style={radioStyles}
             />
             <Label 
               htmlFor={`${question.id}-option-${index}`}
