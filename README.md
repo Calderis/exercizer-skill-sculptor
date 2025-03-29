@@ -1,69 +1,84 @@
-# Welcome to your Lovable project
 
-## Project info
+# Exercizer
 
-**URL**: https://lovable.dev/projects/8fa14ecb-da2e-432b-a4e9-56da5cc41d14
+A reusable React component for rendering and evaluating interactive exercises and assessments.
 
-## How can I edit this code?
+## Overview
 
-There are several ways of editing your application.
+Exercizer is a dynamic exercise renderer and evaluator that takes a subject or skill as input, fetches an exercise structure, renders the appropriate form/questions, and evaluates user responses.
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8fa14ecb-da2e-432b-a4e9-56da5cc41d14) and start prompting.
+- Dynamic fetching of exercises based on a subject/skill
+- Support for various question types:
+  - Multiple choice questions
+  - Fill-in-the-blank 
+  - Media-based questions (image, video, audio)
+- Answer evaluation with detailed feedback
+- Retry functionality
+- Result tracking
 
-Changes made via Lovable will be committed automatically to this repo.
+## Installation
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+npm install exercizer
+# or
+yarn add exercizer
 ```
 
-**Edit a file directly in GitHub**
+## Basic Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```jsx
+import { Exercizer } from 'exercizer';
 
-**Use GitHub Codespaces**
+function MyApp() {
+  const handleComplete = (result) => {
+    console.log('Exercise completed:', result);
+    // result contains { subject, success, score }
+  };
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+  return (
+    <div className="container">
+      <h1>Math Practice</h1>
+      <Exercizer 
+        subject="math" 
+        onComplete={handleComplete}
+      />
+    </div>
+  );
+}
+```
 
-## What technologies are used for this project?
+## Props
 
-This project is built with .
+| Prop | Type | Description |
+|------|------|-------------|
+| `subject` | string | The subject or skill for which to fetch exercises |
+| `onComplete` | function | Callback function called when the user completes an exercise |
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## API Integration
 
-## How can I deploy this project?
+By default, Exercizer uses mock API functions. To connect to your actual backend:
 
-Simply open [Lovable](https://lovable.dev/projects/8fa14ecb-da2e-432b-a4e9-56da5cc41d14) and click on Share -> Publish.
+1. Create an API adapter that matches the interface expected by Exercizer
+2. Pass your adapter to the component
 
-## I want to use a custom domain - is that possible?
+Example:
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+```jsx
+import { Exercizer } from 'exercizer';
+import myApiAdapter from './myApiAdapter';
+
+function MyApp() {
+  return (
+    <Exercizer 
+      subject="math" 
+      apiAdapter={myApiAdapter}
+    />
+  );
+}
+```
+
+## License
+
+MIT
