@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, XCircle } from 'lucide-react';
 
-const FeedbackDisplay = ({ evaluation, exercise, userAnswers, onContinue }) => {
+const FeedbackDisplay = ({ evaluation, exercise, userAnswers, onContinue, themeColor = "#0891b2" }) => {
   const { success, score, feedbackItems } = evaluation;
   
   // Find question details from the exercise data
@@ -11,9 +11,19 @@ const FeedbackDisplay = ({ evaluation, exercise, userAnswers, onContinue }) => {
     return exercise.questions.find(q => q.id === questionId);
   };
 
+  const buttonStyle = {
+    backgroundColor: themeColor,
+    borderColor: themeColor,
+    color: "#ffffff",
+  };
+  
+  const successStyle = {
+    backgroundColor: success ? themeColor : "#f97316", // Use theme color for success, orange for needs improvement
+  };
+
   return (
     <div className="space-y-6">
-      <div className={`p-6 rounded-lg text-white ${success ? 'bg-green-500' : 'bg-orange-500'}`}>
+      <div className="p-6 rounded-lg text-white" style={successStyle}>
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold">
             {success ? 'Great job!' : 'Almost there!'}
@@ -68,9 +78,10 @@ const FeedbackDisplay = ({ evaluation, exercise, userAnswers, onContinue }) => {
       <div className="mt-6 text-right">
         <Button 
           onClick={onContinue}
-          className="bg-blue-500 hover:bg-blue-600"
+          style={buttonStyle}
+          className="px-8 py-2 rounded-md hover:opacity-90 transition-opacity duration-200"
         >
-          Continue
+          Next
         </Button>
       </div>
     </div>

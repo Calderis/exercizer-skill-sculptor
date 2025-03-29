@@ -7,8 +7,13 @@ import ExerciseRenderer from './ExerciseRenderer';
 import FeedbackDisplay from './FeedbackDisplay';
 import RetryPrompt from './RetryPrompt';
 import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
-const Exercizer = ({ subject, onComplete }) => {
+const Exercizer = ({ 
+  subject, 
+  onComplete,
+  themeColor = "#0891b2" // Default teal color
+}) => {
   const [exercise, setExercise] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
   const [evaluation, setEvaluation] = useState(null);
@@ -102,11 +107,25 @@ const Exercizer = ({ subject, onComplete }) => {
     loadExercise();
   };
 
+  // Custom styling based on theme color
+  const customStyles = {
+    header: {
+      borderLeft: `4px solid ${themeColor}`,
+      paddingLeft: '1rem',
+    },
+    iconButton: {
+      color: themeColor,
+    },
+    container: {
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+    }
+  };
+
   // Render different states based on currentStep
   const renderContent = () => {
     switch (currentStep) {
       case 'loading':
-        return <LoadingState />;
+        return <LoadingState themeColor={themeColor} />;
       
       case 'exercise':
         return (
@@ -116,6 +135,7 @@ const Exercizer = ({ subject, onComplete }) => {
             onAnswerChange={handleAnswerChange}
             onSubmit={handleSubmit}
             submitting={submitting}
+            themeColor={themeColor}
           />
         );
       
@@ -126,6 +146,7 @@ const Exercizer = ({ subject, onComplete }) => {
             exercise={exercise}
             userAnswers={userAnswers}
             onContinue={() => setCurrentStep('retry')}
+            themeColor={themeColor}
           />
         );
       
@@ -135,6 +156,7 @@ const Exercizer = ({ subject, onComplete }) => {
             success={evaluation.success}
             score={evaluation.score}
             onRetryDecision={handleRetry}
+            themeColor={themeColor}
           />
         );
       
@@ -144,31 +166,32 @@ const Exercizer = ({ subject, onComplete }) => {
   };
 
   return (
-    <div className="exercizer-container w-full max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <div className="exercizer-header mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">
-          {exercise?.title || `${subject} Exercise`}
-        </h2>
+    <div 
+      className="exercizer-container w-full max-w-3xl mx-auto p-6 bg-white rounded-lg"
+      style={customStyles.container}
+    >
+      <div className="exercizer-header mb-8 flex justify-between items-center">
+        <div style={customStyles.header}>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {exercise?.title || `${subject} Exercise`}
+          </h2>
+          {exercise?.description && (
+            <p className="text-gray-600 mt-2">{exercise.description}</p>
+          )}
+        </div>
+        
         {exerciseCompleted && (
           <Button 
             variant="outline" 
             onClick={handleRestart}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-gray-200"
+            style={customStyles.iconButton}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-refresh-cw">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-              <path d="M21 3v5h-5"></path>
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-              <path d="M3 21v-5h5"></path>
-            </svg>
+            <RefreshCw size={16} />
             New Questions
           </Button>
         )}
       </div>
-      
-      {exercise?.description && (
-        <p className="text-gray-600 mt-2 mb-6">{exercise.description}</p>
-      )}
       
       <div className="exercizer-content">
         {renderContent()}

@@ -10,7 +10,8 @@ const ExerciseRenderer = ({
   userAnswers, 
   onAnswerChange, 
   onSubmit,
-  submitting 
+  submitting,
+  themeColor = "#0891b2", // Default teal color
 }) => {
   const allQuestionsAnswered = exercise.questions.every(
     question => userAnswers[question.id] !== undefined
@@ -25,6 +26,7 @@ const ExerciseRenderer = ({
             question={question}
             value={userAnswers[question.id]}
             onChange={(answer) => onAnswerChange(question.id, answer)}
+            themeColor={themeColor}
           />
         );
         
@@ -35,6 +37,7 @@ const ExerciseRenderer = ({
             question={question}
             value={userAnswers[question.id] || ''}
             onChange={(answer) => onAnswerChange(question.id, answer)}
+            themeColor={themeColor}
           />
         );
         
@@ -45,6 +48,7 @@ const ExerciseRenderer = ({
             question={question}
             value={userAnswers[question.id]}
             onChange={(answer) => onAnswerChange(question.id, answer)}
+            themeColor={themeColor}
           />
         );
         
@@ -57,12 +61,18 @@ const ExerciseRenderer = ({
     }
   };
 
+  const buttonStyle = {
+    backgroundColor: themeColor,
+    borderColor: themeColor,
+    color: "#ffffff",
+  };
+
   return (
     <div className="space-y-8">
       {exercise.questions.map(renderQuestion)}
       
-      <div className="mt-8 flex justify-between items-center">
-        <div>
+      <div className="mt-8 flex justify-end items-center">
+        <div className="mr-4">
           {!allQuestionsAnswered && (
             <p className="text-yellow-600">
               Please answer all questions before submitting.
@@ -73,8 +83,10 @@ const ExerciseRenderer = ({
         <Button
           onClick={onSubmit}
           disabled={!allQuestionsAnswered || submitting}
+          style={buttonStyle}
+          className="px-8 py-2 rounded-md hover:opacity-90 transition-opacity duration-200"
         >
-          {submitting ? 'Submitting...' : 'Submit Answers'}
+          {submitting ? 'Submitting...' : 'Next'}
         </Button>
       </div>
     </div>

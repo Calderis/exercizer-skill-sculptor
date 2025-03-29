@@ -2,7 +2,13 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
-const RetryPrompt = ({ success, score, onRetryDecision }) => {
+const RetryPrompt = ({ success, score, onRetryDecision, themeColor = "#0891b2" }) => {
+  const buttonStyle = {
+    backgroundColor: themeColor,
+    borderColor: themeColor,
+    color: "#ffffff",
+  };
+
   return (
     <div className="text-center py-8">
       <h3 className="text-2xl font-bold mb-2">
@@ -19,16 +25,17 @@ const RetryPrompt = ({ success, score, onRetryDecision }) => {
         <Button
           variant="outline"
           onClick={() => onRetryDecision(false)}
-          className="border-gray-300 hover:bg-gray-100"
+          className="border-gray-300 hover:bg-gray-100 px-8 py-2"
         >
-          No, I'm done
+          Cancel
         </Button>
         
         <Button
           onClick={() => onRetryDecision(true)}
-          className="bg-blue-500 hover:bg-blue-600"
+          style={buttonStyle}
+          className="px-8 py-2 rounded-md hover:opacity-90 transition-opacity duration-200"
         >
-          Yes, {success ? 'new exercise' : 'try again'}
+          {success ? 'Next' : 'Try again'}
         </Button>
       </div>
     </div>
