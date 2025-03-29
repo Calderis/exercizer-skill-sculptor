@@ -15,6 +15,7 @@ const Exercizer = ({ subject, onComplete }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState('loading'); // loading, exercise, feedback, retry
+  const [exerciseCompleted, setExerciseCompleted] = useState(false);
   const { toast } = useToast();
 
   // Fetch exercise on mount or when subject changes
@@ -57,6 +58,7 @@ const Exercizer = ({ subject, onComplete }) => {
     try {
       const result = await submitAnswers(exercise.id, userAnswers);
       setEvaluation(result);
+      setExerciseCompleted(true);
       setCurrentStep('feedback');
     } catch (error) {
       toast({
@@ -147,7 +149,7 @@ const Exercizer = ({ subject, onComplete }) => {
         <h2 className="text-2xl font-bold text-gray-800">
           {exercise?.title || `${subject} Exercise`}
         </h2>
-        {currentStep === 'exercise' && (
+        {exerciseCompleted && (
           <Button 
             variant="outline" 
             onClick={handleRestart}

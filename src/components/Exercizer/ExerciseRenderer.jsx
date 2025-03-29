@@ -73,7 +73,6 @@ const ExerciseRenderer = ({
         <Button
           onClick={onSubmit}
           disabled={!allQuestionsAnswered || submitting}
-          className="bg-blue-500 hover:bg-blue-600"
         >
           {submitting ? 'Submitting...' : 'Submit Answers'}
         </Button>
