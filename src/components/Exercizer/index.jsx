@@ -32,7 +32,8 @@ const Exercizer = ({
   context,
   contentType,
   onComplete,
-  themeColor = "#0891b2" // Default teal color
+  themeColor = "#0891b2", // Default teal color
+  showBanner = true // Nouvelle propriété pour contrôler l'affichage de la bannière
 }) => {
   const [exercise, setExercise] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
@@ -157,6 +158,7 @@ const Exercizer = ({
             onSubmit={handleSubmit}
             submitting={submitting}
             themeColor={themeColor}
+            showBanner={showBanner}
           />
         );
       

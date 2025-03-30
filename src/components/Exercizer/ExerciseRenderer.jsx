@@ -39,6 +39,23 @@ const ChevronRightIcon = (props) => (
   </svg>
 );
 
+// Composant pour l'image d'ambiance
+const BannerImage = ({ imageUrl, title }) => {
+  if (!imageUrl) return null;
+  
+  return (
+    <div className="relative w-full h-40 mb-6 overflow-hidden rounded-lg">
+      <img 
+        src={imageUrl} 
+        alt={`Image d'ambiance pour ${title}`} 
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <h2 className="absolute bottom-4 left-4 text-white text-xl font-bold">{title}</h2>
+    </div>
+  );
+};
+
 const ExerciseRenderer = ({ 
   exercise, 
   userAnswers, 
@@ -46,6 +63,7 @@ const ExerciseRenderer = ({
   onSubmit,
   submitting,
   themeColor = "#0891b2", // Default teal color
+  showBanner = true // Propriété pour contrôler l'affichage de la bannière
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   
@@ -137,8 +155,13 @@ const ExerciseRenderer = ({
 
   const currentQuestion = exercise.questions[currentStep];
 
+  console.log("exercise", exercise);
+
   return (
     <div className="space-y-8">
+      {/* Banner Image */}
+      {showBanner && <BannerImage imageUrl={exercise.bannerImage} title={exercise.title} />}
+      
       {/* Progression indicator */}
       <div className="flex items-center justify-between mb-4 gap-1">
         <div className="text-sm text-gray-500">

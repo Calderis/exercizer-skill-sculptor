@@ -12,10 +12,20 @@ const Index = () => {
     // Essayer de récupérer la valeur depuis les cookies ou utiliser la valeur par défaut
     return Cookies.get('exercizer_context') || "Camille est une élève de 6ème au Collège Jean Moulin à Nantes, âgée de 14 ans. Elle est passionnée par la lecture, le dessin, la photographie, et l'écriture de nouvelles. Elle aime particulièrement Le Petit Prince d'Antoine de Saint-Exupéry, ainsi que des séries comme Stranger Things et des films comme Harry Potter. Ses activités incluent la natation, la danse, et le théâtre. Elle vit avec ses parents, Marc (ingénieur en informatique) et Sophie (professeure de français), ainsi que sa petite sœur Clara. Camille a un chat nommé Luna et aime passer du temps avec ses amis, notamment Emma, Lucas, Chloé, et Noah. Elle utilise Instagram et aime voyager, particulièrement en Bretagne. Ses musiques préférées incluent Dynamite et Butter de BTS, Bad Habits d'Ed Sheeran, Watermelon Sugar de Harry Styles, Levitating et Don't Start Now de Dua Lipa, Good 4 U d'Olivia Rodrigo, Blinding Lights de The Weeknd, Dance Monkey de Tones and I, et Savage Love de Jawsh 685 et Jason Derulo.";
   });
+  const [showBanner, setShowBanner] = useState(() => {
+    // Récupérer la valeur depuis les cookies ou utiliser true par défaut
+    return Cookies.get('exercizer_showBanner') !== 'false';
+  });
+  const [themeColor, setThemeColor] = useState(() => {
+    // Récupérer la valeur depuis les cookies ou utiliser la valeur par défaut
+    return Cookies.get('exercizer_themeColor') || "#2C44FF";
+  });
   
   // États temporaires pour le formulaire
   const [tempSubject, setTempSubject] = useState(currentSubject);
   const [tempContext, setTempContext] = useState(currentContext);
+  const [tempShowBanner, setTempShowBanner] = useState(showBanner);
+  const [tempThemeColor, setTempThemeColor] = useState(themeColor);
   
   // État pour forcer le rechargement du composant Exercizer
   const [exercizerKey, setExercizerKey] = useState(0);
@@ -29,6 +39,14 @@ const Index = () => {
     Cookies.set('exercizer_context', currentContext, { expires: 30 }); // Expire dans 30 jours
   }, [currentContext]);
 
+  useEffect(() => {
+    Cookies.set('exercizer_showBanner', showBanner, { expires: 30 }); // Expire dans 30 jours
+  }, [showBanner]);
+
+  useEffect(() => {
+    Cookies.set('exercizer_themeColor', themeColor, { expires: 30 }); // Expire dans 30 jours
+  }, [themeColor]);
+
   const handleExercizeComplete = (result) => {
     console.log('Exercise completed:', result);
   };
@@ -37,6 +55,8 @@ const Index = () => {
   const handleApplyChanges = () => {
     setCurrentSubject(tempSubject);
     setCurrentContext(tempContext);
+    setShowBanner(tempShowBanner);
+    setThemeColor(tempThemeColor);
     setExercizerKey(prevKey => prevKey + 1); // Force le rechargement du composant
     setShowConfigPanel(false); // Ferme le panneau de configuration
   };
@@ -134,6 +154,44 @@ const Index = () => {
                 />
               </div>
               
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="themeColor" className="block text-sm font-medium text-gray-700 mb-1">
+                    Couleur du thème
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      id="themeColor"
+                      value={tempThemeColor}
+                      onChange={(e) => setTempThemeColor(e.target.value)}
+                      className="h-10 w-20 border-0 p-0"
+                    />
+                    <span className="text-sm text-gray-600">{tempThemeColor}</span>
+                  </div>
+                </div>
+                
+                <div>
+                  <span className="block text-sm font-medium text-gray-700 mb-1">
+                    Afficher l'image de bannière
+                  </span>
+                  <div className="flex items-center space-x-2 h-10">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={tempShowBanner} 
+                        onChange={(e) => setTempShowBanner(e.target.checked)}
+                        className="sr-only peer" 
+                      />
+                      <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-indigo-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <span className="ml-2 text-sm font-medium text-gray-700">
+                        {tempShowBanner ? "Oui" : "Non"}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
               <div className="flex justify-end">
                 <button
                   onClick={handleApplyChanges}
@@ -167,7 +225,8 @@ const Index = () => {
                 subject={currentSubject}
                 context={currentContext}
                 onComplete={handleExercizeComplete}
-                themeColor="#4f46e5"
+                themeColor={themeColor}
+                showBanner={showBanner}
               />
             </div>
           </div>

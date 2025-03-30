@@ -12,6 +12,7 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
   console.log(`Fetching exercise for: ${subject}`);
   
   const apiUrl = "https://inframatic.app.n8n.cloud/webhook/091cf9db-07c7-4db6-901c-624ac2552bdf";
+  const imageApiUrl = "https://inframatic.app.n8n.cloud/webhook/091cf9db-07c7-4db6-901c-624ac2552bde";
   
   // Prepare the request body
   const requestBody = {
@@ -20,29 +21,54 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
     skill_to_validate: subject
   };
 
+  // Fetch image (optional)
+  const fetchImage = () => {
+    return fetch(`${imageApiUrl}?skill_to_validate=${encodeURIComponent(subject)}`)
+      .then(response => {
+        if (!response.ok) {
+          console.warn(`Image fetch failed with status: ${response.status}`);
+          return null;
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("data", data);
+        return data && data.length > 0 ? data[0]?.url : null;
+      })
+      .catch(error => {
+        console.warn("Error fetching image:", error);
+        return null;
+      });
+  };
+
   // Make the actual API call
-  return fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody),
-  })
-  .then(async response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
+  return Promise.all([
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    })
+    .then(async response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    }),
+    fetchImage()
+  ])
+  .then(([exerciseData, bannerImage]) => {
     // Process the API response based on format
-    if (Array.isArray(data) ) {
+    let exerciseObject;
+
+    console.log("bannerImage", bannerImage);
+    
+    if (Array.isArray(exerciseData)) {
       const questions = [];
-      data.forEach(({ output }) => questions.push(...output.questions));
-      // const { questions } = data[0]?.output;
-      // const questions = JSON.parse(data[0]?.choices[0]?.message?.content).form;
-      // Nouveau format API - liste de questions
-      return {
+      exerciseData.forEach(({ output }) => questions.push(...output.questions));
+      
+      exerciseObject = {
         id: `exercise-${subject}-${Date.now()}`,
         title: `Exercise: ${subject}`,
         description: `Exercise for skill: ${subject}`,
@@ -55,111 +81,22 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
           statement: q.statement,
         }))
       };
+    } else {
+      // Format existant - retourner tel quel
+      exerciseObject = exerciseData;
     }
     
-    // Format existant - retourner tel quel
-    return data;
+    // Add banner image if available
+    if (bannerImage) {
+      exerciseObject.bannerImage = bannerImage;
+    }
+    
+    return exerciseObject;
   })
   .catch(error => {
     console.error("Error fetching exercise:", error);
     
     // Fallback to mock data in case of API failure
-    // const exercises = {
-    //   default: {
-    //     "id": "conjugaison-1",
-    //     "title": "Conjugaison – Passé simple",
-    //     "description": "Choisis la bonne forme du verbe conjugué au passé simple.",
-    //     "type": "quiz",
-    //     "questions": [
-    //       {
-    //         "question": "Pendant la pause shopping, Camille (essayer) une robe bleue qui lui rappelait ses vacances en Polynésie.",
-    //         "type": "multiple_choice",
-    //         "answers": [
-    //           {
-    //             "answer": "essaya",
-    //             "correct": true,
-    //             "position": 1
-    //           },
-    //           {
-    //             "answer": "essayait",
-    //             "correct": false,
-    //             "position": 2
-    //           },
-    //           {
-    //             "answer": "essayaient",
-    //             "correct": false,
-    //             "position": 3
-    //           },
-    //           {
-    //             "answer": "essayaît",
-    //             "correct": false,
-    //             "position": 4
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   },
-    //   passeSimple: {
-    //     "id": "conjugaison-fun-1",
-    //     "title": "Conjugaison au Passé simple",
-    //     "description": "Choisis la bonne forme du verbe conjugué au passé simple dans ces situations rigolotes.",
-    //     "type": "quiz",
-    //     "questions": [
-    //       {
-    //         "question": "En sortant d’une cabine d’essayage, elle (tomber) nez à nez avec… sa prof de maths !",
-    //         "type": "multiple_choice",
-    //         "answers": [
-    //           {
-    //             "answer": "tomba",
-    //             "correct": true,
-    //             "position": 1
-    //           },
-    //           {
-    //             "answer": "tombait",
-    //             "correct": false,
-    //             "position": 2
-    //           },
-    //           {
-    //             "answer": "tombèrent",
-    //             "correct": false,
-    //             "position": 3
-    //           },
-    //           {
-    //             "answer": "tombé",
-    //             "correct": false,
-    //             "position": 4
-    //           }
-    //         ]
-    //       },
-    //       {
-    //         "question": "Pendant la répétition de la pièce, elle (oublier) tout son texte… mais inventa une chanson à la place !",
-    //         "type": "multiple_choice",
-    //         "answers": [
-    //           {
-    //             "answer": "oublia",
-    //             "correct": true,
-    //             "position": 1
-    //           },
-    //           {
-    //             "answer": "oubliais",
-    //             "correct": false,
-    //             "position": 2
-    //           },
-    //           {
-    //             "answer": "oublient",
-    //             "correct": false,
-    //             "position": 3
-    //           },
-    //           {
-    //             "answer": "oublièrent",
-    //             "correct": false,
-    //             "position": 4
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // };
     const exercises = {
       default: {
         id: 'default-1',

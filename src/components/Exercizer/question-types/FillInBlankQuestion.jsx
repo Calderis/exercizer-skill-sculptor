@@ -116,7 +116,7 @@ const FillInBlankQuestion = ({ question, value, onChange, themeColor = "#0891b2"
                   marginBottom: '0.25rem'
                 }}
                 aria-label={`Fill in the blank ${index + 1}`}
-                placeholder="Votre réponse"
+                placeholder={question.placeholder || "Votre réponse"}
               />
             )}
           </React.Fragment>
