@@ -4,7 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/exercizer-skill-sculptor/", // Base URL pour GitHub Pages
+  base: "/", // Base URL pour GitHub Pages
   server: {
     host: "::",
     port: 8080,
