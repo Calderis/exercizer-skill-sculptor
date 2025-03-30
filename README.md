@@ -1,45 +1,47 @@
-
 # Exercizer
 
-A reusable React component for rendering and evaluating interactive exercises and assessments.
+Un composant React réutilisable pour afficher et évaluer des exercices et évaluations interactifs.
 
-## Overview
+## Aperçu
 
-Exercizer is a dynamic exercise renderer and evaluator that takes a subject or skill as input, fetches an exercise structure, renders the appropriate form/questions, and evaluates user responses.
+Exercizer est un outil dynamique qui prend en entrée un sujet ou une compétence, récupère la structure d'un exercice, affiche le formulaire/les questions appropriées et évalue les réponses de l'utilisateur.
 
-## Features
+## Fonctionnalités
 
-- Dynamic fetching of exercises based on a subject/skill
-- Support for various question types:
-  - Multiple choice questions
-  - Fill-in-the-blank 
-  - Media-based questions (image, video, audio)
-- Answer evaluation with detailed feedback
-- Retry functionality
-- Result tracking
+- Récupération dynamique d'exercices basés sur un sujet/une compétence
+- Support pour différents types de questions :
+  - Questions à choix multiples (QCM)
+  - Questions à trous
+  - Questions avec glisser-déposer de mots
+  - Questions basées sur des médias (image, vidéo, audio)
+- Évaluation des réponses avec feedback détaillé
+- Personnalisation des exercices basée sur le contexte de l'étudiant
+- Fonctionnalité de réessai
+- Suivi des résultats
+- Personnalisation des couleurs du thème
 
 ## Installation
 
 ```bash
 npm install exercizer
-# or
+# ou
 yarn add exercizer
 ```
 
-## Basic Usage
+## Utilisation basique
 
 ```jsx
 import { Exercizer } from 'exercizer';
 
-function MyApp() {
+function MonApplication() {
   const handleComplete = (result) => {
-    console.log('Exercise completed:', result);
-    // result contains { subject, success, score }
+    console.log('Exercice terminé:', result);
+    // result contient { subject, success, score }
   };
 
   return (
     <div className="container">
-      <h1>Math Practice</h1>
+      <h1>Pratique de mathématiques</h1>
       <Exercizer 
         subject="math" 
         onComplete={handleComplete}
@@ -51,34 +53,58 @@ function MyApp() {
 
 ## Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `subject` | string | The subject or skill for which to fetch exercises |
-| `onComplete` | function | Callback function called when the user completes an exercise |
+| Prop | Type | Description | Par défaut |
+|------|------|-------------|------------|
+| `subject` | string | Le sujet ou la compétence pour lequel récupérer des exercices | (obligatoire) |
+| `context` | string | Contexte de l'étudiant pour personnaliser les exercices | "" |
+| `contentType` | string | Type de contenu préféré pour les exercices | "multiple_choice" |
+| `onComplete` | function | Fonction de callback appelée lorsque l'utilisateur termine un exercice | () => {} |
+| `themeColor` | string | Couleur du thème pour personnaliser l'interface (code hexadécimal) | "#0891b2" |
 
-## API Integration
+## Types de questions supportés
 
-By default, Exercizer uses mock API functions. To connect to your actual backend:
+Le composant Exercizer prend en charge plusieurs types de questions :
 
-1. Create an API adapter that matches the interface expected by Exercizer
-2. Pass your adapter to the component
+- **Questions à choix multiples** (`multiple_choice` ou `mcq`) : Questions classiques où l'utilisateur doit sélectionner une ou plusieurs réponses parmi des options.
+- **Questions à trous** (`fill_in_the_blanks` ou `fill-in-blank`) : L'utilisateur doit remplir les espaces vides dans un texte.
+- **Glisser-déposer de mots** (`drag_the_words`) : L'utilisateur doit réorganiser des mots pour former une phrase correcte.
+- **Questions avec média** : Questions accompagnées d'une image, d'une vidéo ou d'un fichier audio pour enrichir le contexte.
 
-Example:
+## Personnalisation avec contexte étudiant
+
+Vous pouvez personnaliser les exercices en fonction du profil de l'étudiant en fournissant un contexte :
+
+```jsx
+<Exercizer 
+  subject="français, conjugaison, présent"
+  context="Élève de 6ème, 12 ans, passion pour la lecture"
+  onComplete={handleComplete}
+/>
+```
+
+## Intégration API
+
+Par défaut, Exercizer utilise des fonctions API simulées. Pour vous connecter à votre backend :
+
+1. Créez un adaptateur API qui correspond à l'interface attendue par Exercizer
+2. Passez votre adaptateur au composant
+
+Exemple :
 
 ```jsx
 import { Exercizer } from 'exercizer';
-import myApiAdapter from './myApiAdapter';
+import monAdaptateurApi from './monAdaptateurApi';
 
-function MyApp() {
+function MonApplication() {
   return (
     <Exercizer 
       subject="math" 
-      apiAdapter={myApiAdapter}
+      apiAdapter={monAdaptateurApi}
     />
   );
 }
 ```
 
-## License
+## Licence
 
 MIT
