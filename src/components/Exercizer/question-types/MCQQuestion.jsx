@@ -79,6 +79,13 @@ const MCQQuestion = ({ question, value, onChange, themeColor = "#0891b2" }) => {
   
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+      {/* Bloc de mise en contexte de la question */}
+      {question.statement && (
+        <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-gray-700">{question.statement}</p>
+        </div>
+      )}
+      
       <h3 className="text-xl font-medium text-gray-900 mb-6">{questionText}</h3>
       
       <div className="space-y-4">

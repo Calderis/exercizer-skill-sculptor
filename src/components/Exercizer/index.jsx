@@ -188,7 +188,7 @@ const Exercizer = ({
 
 
   return (
-    <div  className="exercizer-container w-full max-w-3xl mx-auto p-6 bg-white">
+    <div  className="exercizer-container w-full max-w-3xl mx-auto sm:p-6 bg-white">
       
       <div className="exercizer-content">
         {renderContent()}

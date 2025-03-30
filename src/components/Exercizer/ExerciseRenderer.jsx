@@ -85,6 +85,7 @@ const ExerciseRenderer = ({
         );
         
       case 'fill-in-blank':
+      case 'fill_in_the_blank':
       case 'fill_in_the_blanks':
         return (
           <FillInBlankQuestion
@@ -139,11 +140,11 @@ const ExerciseRenderer = ({
   return (
     <div className="space-y-8">
       {/* Progression indicator */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-1">
         <div className="text-sm text-gray-500">
           Question {currentStep + 1} sur {exercise.questions.length}
         </div>
-        <div className="w-2/3 bg-gray-200 rounded-full h-2.5">
+        <div className="w-3/5 bg-gray-200 rounded-full h-2.5">
           <div 
             className="h-2.5 rounded-full" 
             style={{

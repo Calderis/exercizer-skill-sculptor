@@ -33,26 +33,28 @@ const DragTheWordsQuestion = ({ question, value, onChange, themeColor = "#0891b2
       onChange(value);
       
       // Mettre à jour l'état "dragged" des mots correspondants
-      const updatedWords = [...words];
-      value.forEach(droppedWord => {
-        if (droppedWord) {
-          const index = updatedWords.findIndex(w => w.id === droppedWord.id);
-          if (index !== -1) {
-            updatedWords[index] = { ...updatedWords[index], isDragged: true };
+      // Seulement si words contient des éléments
+      if (words.length > 0) {
+        const updatedWords = [...words];
+        let hasChanges = false;
+        
+        value.forEach(droppedWord => {
+          if (droppedWord) {
+            const index = updatedWords.findIndex(w => w.id === droppedWord.id);
+            if (index !== -1 && !updatedWords[index].isDragged) {
+              updatedWords[index] = { ...updatedWords[index], isDragged: true };
+              hasChanges = true;
+            }
           }
+        });
+        
+        // Ne mettre à jour words que si des changements ont été apportés
+        if (hasChanges) {
+          setWords(updatedWords);
         }
-      });
-      setWords(updatedWords);
+      }
     }
-  }, [value, words]);
-
-  // // Mettre à jour la valeur parent lorsque les mots déposés changent
-  // useEffect(() => {
-  //   // Seulement si l'état a été initialisé
-  //   if (droppedWords.some(word => word !== null)) {
-  //     onChange(droppedWords);
-  //   }
-  // }, [droppedWords]);
+  }, [value]); // Retirer 'words' des dépendances pour éviter les boucles infinies
 
   // Fonction pour mélanger un tableau
   const shuffleArray = (array) => {
@@ -127,6 +129,13 @@ const DragTheWordsQuestion = ({ question, value, onChange, themeColor = "#0891b2
 
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+      {/* Bloc de mise en contexte de la question */}
+      {question.statement && (
+        <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-gray-700">{question.statement}</p>
+        </div>
+      )}
+
       {/* Zone de phrase à compléter */}
       <h3 className="flex flex-wrap items-center gap-2 text-lg font-medium text-gray-900 mb-4">
         {promptParts.map((part, index) => (

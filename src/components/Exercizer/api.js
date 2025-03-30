@@ -52,6 +52,7 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
           type: q.type,
           question: q.question,
           answers: q.answers,
+          statement: q.statement,
         }))
       };
     }
