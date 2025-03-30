@@ -4,7 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/", // Base URL pour GitHub Pages
+  base: "/suw-2025-aixercice/", // Base URL pour GitHub Pages
   server: {
     host: "::",
     port: 8080,

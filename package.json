@@ -1,11 +1,12 @@
 {
-  "name": "vite_react_shadcn_js",
+  "name": "suw-2025-aixercice",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
