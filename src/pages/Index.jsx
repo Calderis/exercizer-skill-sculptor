@@ -1,13 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import Exercizer from '../components/Exercizer';
 
 const Index = () => {
   const [showConfigPanel, setShowConfigPanel] = useState(false);
-  const [subject, setSubject] = useState("College, Classe de 6eme, Francais, Conjugaison, Le verbe, les trois groupes verbaux");
-  const [context, setContext] = useState("Camille est une élève de 6ème au Collège Jean Moulin à Nantes, âgée de 14 ans. Elle est passionnée par la lecture, le dessin, la photographie, et l'écriture de nouvelles. Elle aime particulièrement Le Petit Prince d'Antoine de Saint-Exupéry, ainsi que des séries comme Stranger Things et des films comme Harry Potter. Ses activités incluent la natation, la danse, et le théâtre. Elle vit avec ses parents, Marc (ingénieur en informatique) et Sophie (professeure de français), ainsi que sa petite sœur Clara. Camille a un chat nommé Luna et aime passer du temps avec ses amis, notamment Emma, Lucas, Chloé, et Noah. Elle utilise Instagram et aime voyager, particulièrement en Bretagne. Ses musiques préférées incluent Dynamite et Butter de BTS, Bad Habits d'Ed Sheeran, Watermelon Sugar de Harry Styles, Levitating et Don't Start Now de Dua Lipa, Good 4 U d'Olivia Rodrigo, Blinding Lights de The Weeknd, Dance Monkey de Tones and I, et Savage Love de Jawsh 685 et Jason Derulo.");
+  const [currentSubject, setCurrentSubject] = useState(() => {
+    // Essayer de récupérer la valeur depuis les cookies ou utiliser la valeur par défaut
+    return Cookies.get('exercizer_subject') || "College, Classe de 6eme, Francais, Conjugaison, Le verbe, les trois groupes verbaux";
+  });
+  const [currentContext, setCurrentContext] = useState(() => {
+    // Essayer de récupérer la valeur depuis les cookies ou utiliser la valeur par défaut
+    return Cookies.get('exercizer_context') || "Camille est une élève de 6ème au Collège Jean Moulin à Nantes, âgée de 14 ans. Elle est passionnée par la lecture, le dessin, la photographie, et l'écriture de nouvelles. Elle aime particulièrement Le Petit Prince d'Antoine de Saint-Exupéry, ainsi que des séries comme Stranger Things et des films comme Harry Potter. Ses activités incluent la natation, la danse, et le théâtre. Elle vit avec ses parents, Marc (ingénieur en informatique) et Sophie (professeure de français), ainsi que sa petite sœur Clara. Camille a un chat nommé Luna et aime passer du temps avec ses amis, notamment Emma, Lucas, Chloé, et Noah. Elle utilise Instagram et aime voyager, particulièrement en Bretagne. Ses musiques préférées incluent Dynamite et Butter de BTS, Bad Habits d'Ed Sheeran, Watermelon Sugar de Harry Styles, Levitating et Don't Start Now de Dua Lipa, Good 4 U d'Olivia Rodrigo, Blinding Lights de The Weeknd, Dance Monkey de Tones and I, et Savage Love de Jawsh 685 et Jason Derulo.";
+  });
+  
+  // États temporaires pour le formulaire
+  const [tempSubject, setTempSubject] = useState(currentSubject);
+  const [tempContext, setTempContext] = useState(currentContext);
+  
+  // État pour forcer le rechargement du composant Exercizer
+  const [exercizerKey, setExercizerKey] = useState(0);
+
+  // Sauvegarder les valeurs dans les cookies lorsqu'elles changent
+  useEffect(() => {
+    Cookies.set('exercizer_subject', currentSubject, { expires: 30 }); // Expire dans 30 jours
+  }, [currentSubject]);
+
+  useEffect(() => {
+    Cookies.set('exercizer_context', currentContext, { expires: 30 }); // Expire dans 30 jours
+  }, [currentContext]);
 
   const handleExercizeComplete = (result) => {
     console.log('Exercise completed:', result);
+  };
+  
+  // Fonction pour appliquer les changements et régénérer l'exercice
+  const handleApplyChanges = () => {
+    setCurrentSubject(tempSubject);
+    setCurrentContext(tempContext);
+    setExercizerKey(prevKey => prevKey + 1); // Force le rechargement du composant
+    setShowConfigPanel(false); // Ferme le panneau de configuration
   };
 
   // Fonction pour le skeleton loading
@@ -84,8 +115,8 @@ const Index = () => {
                 <input
                   type="text"
                   id="subject"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
+                  value={tempSubject}
+                  onChange={(e) => setTempSubject(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
@@ -96,11 +127,20 @@ const Index = () => {
                 </label>
                 <textarea
                   id="context"
-                  value={context}
-                  onChange={(e) => setContext(e.target.value)}
+                  value={tempContext}
+                  onChange={(e) => setTempContext(e.target.value)}
                   rows={6}
                   className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 />
+              </div>
+              
+              <div className="flex justify-end">
+                <button
+                  onClick={handleApplyChanges}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Régénérer l'exercice
+                </button>
               </div>
             </div>
           </div>
@@ -123,8 +163,9 @@ const Index = () => {
             </div>
             <div className="p-4">
               <Exercizer 
-                subject={subject}
-                context={context}
+                key={exercizerKey}
+                subject={currentSubject}
+                context={currentContext}
                 onComplete={handleExercizeComplete}
                 themeColor="#4f46e5"
               />
