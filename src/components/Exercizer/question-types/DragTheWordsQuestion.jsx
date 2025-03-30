@@ -10,7 +10,7 @@ const DragTheWordsQuestion = ({ question, value, onChange, themeColor = "#0891b2
     if (question.answers && question.answers.length > 0) {
       // Créer un tableau de mots basé sur les réponses
       const shuffledWords = [...question.answers].map(answer => ({
-        id: `word-${answer.position}`,
+        id: `word-${answer.text}-${answer.position}-${answer.correct}`,
         text: answer.text,
         position: answer.position,
         isDragged: false
@@ -148,7 +148,7 @@ const DragTheWordsQuestion = ({ question, value, onChange, themeColor = "#0891b2
                 className={`inline-flex justify-center items-center w-32 md:w-40 h-8 text-center border rounded ${!droppedWords[index] ? 'border-dashed' : 'border-solid'}`}
                 style={{
                   borderColor: themeColor,
-                  backgroundColor: droppedWords[index] ? 'rgba(8, 145, 178, 0.1)' : 'transparent',
+                  backgroundColor: droppedWords[index] ? `${themeColor}10` : 'transparent',
                   minWidth: '100px'
                 }}
               >

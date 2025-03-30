@@ -32,7 +32,6 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
         return response.json();
       })
       .then(data => {
-        console.log("data", data);
         return data && data.length > 0 ? data[0]?.url : null;
       })
       .catch(error => {
@@ -61,8 +60,6 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
   .then(([exerciseData, bannerImage]) => {
     // Process the API response based on format
     let exerciseObject;
-
-    console.log("bannerImage", bannerImage);
     
     if (Array.isArray(exerciseData)) {
       const questions = [];
@@ -165,8 +162,6 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
         ]
       }
     };
-
-    console.log("exercises", exercises);
 
     const exercice = (exercises[subject] || exercises.default);
     exercice.questions = exercice.questions.map((e, i) => ({

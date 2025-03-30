@@ -179,8 +179,6 @@ const FeedbackDisplay = ({ evaluation, exercise, userAnswers, onContinue, themeC
     backgroundColor: success ? themeColor : "#f97316", // Use theme color for success, orange for needs improvement
   };
 
-  console.log({ evaluation, exercise, userAnswers, onContinue, themeColor });
-
   return (
     <div className="space-y-6">
       <div className="p-6 rounded-lg text-white" style={successStyle}>

@@ -82,13 +82,6 @@ const FillInBlankQuestion = ({ question, value, onChange, themeColor = "#0891b2"
     setUserInputs(newInputs);
     onChange(newInputs); // Transmettre toutes les valeurs au composant parent
   };
-
-  // Déterminer la couleur de bordure en fonction de la validation
-  const getBorderColor = (index) => {
-    const result = isAnswerCorrect(userInputs[index], index);
-    if (result === null) return themeColor; // Pas encore répondu
-    return result ? '#22c55e' : '#ef4444'; // Vert si correct, rouge si incorrect
-  };
   
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -110,13 +103,13 @@ const FillInBlankQuestion = ({ question, value, onChange, themeColor = "#0891b2"
                 onChange={(e) => handleInputChange(e, index)}
                 className="inline-block align-baseline mx-1 w-48 md:w-40 h-8 text-center border rounded focus:ring-2 focus:ring-opacity-50 focus:outline-none"
                 style={{
-                  borderColor: userInputs[index] ? getBorderColor(index) : themeColor,
+                  borderColor:themeColor,
                   "--tw-ring-color": themeColor,
                   marginTop: '0.25rem',
                   marginBottom: '0.25rem'
                 }}
                 aria-label={`Fill in the blank ${index + 1}`}
-                placeholder={question.placeholder || "Votre réponse"}
+                placeholder={question.answers[index].placeholder || "Votre réponse"}
               />
             )}
           </React.Fragment>
