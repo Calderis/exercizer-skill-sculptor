@@ -36,9 +36,11 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
   })
   .then(data => {
     // Process the API response based on format
-    if (Array.isArray(data) && data[0]?.choices[0]?.message?.content) {
-      console.log("API response data:", JSON.parse(data[0]?.choices[0]?.message?.content));
-      const questions = JSON.parse(data[0]?.choices[0]?.message?.content).form;
+    if (Array.isArray(data) ) {
+      const questions = [];
+      data.forEach(({ output }) => questions.push(...output.questions));
+      // const { questions } = data[0]?.output;
+      // const questions = JSON.parse(data[0]?.choices[0]?.message?.content).form;
       // Nouveau format API - liste de questions
       return {
         id: `exercise-${subject}-${Date.now()}`,
@@ -61,6 +63,102 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
     console.error("Error fetching exercise:", error);
     
     // Fallback to mock data in case of API failure
+    // const exercises = {
+    //   default: {
+    //     "id": "conjugaison-1",
+    //     "title": "Conjugaison – Passé simple",
+    //     "description": "Choisis la bonne forme du verbe conjugué au passé simple.",
+    //     "type": "quiz",
+    //     "questions": [
+    //       {
+    //         "question": "Pendant la pause shopping, Camille (essayer) une robe bleue qui lui rappelait ses vacances en Polynésie.",
+    //         "type": "multiple_choice",
+    //         "answers": [
+    //           {
+    //             "answer": "essaya",
+    //             "correct": true,
+    //             "position": 1
+    //           },
+    //           {
+    //             "answer": "essayait",
+    //             "correct": false,
+    //             "position": 2
+    //           },
+    //           {
+    //             "answer": "essayaient",
+    //             "correct": false,
+    //             "position": 3
+    //           },
+    //           {
+    //             "answer": "essayaît",
+    //             "correct": false,
+    //             "position": 4
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   },
+    //   passeSimple: {
+    //     "id": "conjugaison-fun-1",
+    //     "title": "Conjugaison au Passé simple",
+    //     "description": "Choisis la bonne forme du verbe conjugué au passé simple dans ces situations rigolotes.",
+    //     "type": "quiz",
+    //     "questions": [
+    //       {
+    //         "question": "En sortant d’une cabine d’essayage, elle (tomber) nez à nez avec… sa prof de maths !",
+    //         "type": "multiple_choice",
+    //         "answers": [
+    //           {
+    //             "answer": "tomba",
+    //             "correct": true,
+    //             "position": 1
+    //           },
+    //           {
+    //             "answer": "tombait",
+    //             "correct": false,
+    //             "position": 2
+    //           },
+    //           {
+    //             "answer": "tombèrent",
+    //             "correct": false,
+    //             "position": 3
+    //           },
+    //           {
+    //             "answer": "tombé",
+    //             "correct": false,
+    //             "position": 4
+    //           }
+    //         ]
+    //       },
+    //       {
+    //         "question": "Pendant la répétition de la pièce, elle (oublier) tout son texte… mais inventa une chanson à la place !",
+    //         "type": "multiple_choice",
+    //         "answers": [
+    //           {
+    //             "answer": "oublia",
+    //             "correct": true,
+    //             "position": 1
+    //           },
+    //           {
+    //             "answer": "oubliais",
+    //             "correct": false,
+    //             "position": 2
+    //           },
+    //           {
+    //             "answer": "oublient",
+    //             "correct": false,
+    //             "position": 3
+    //           },
+    //           {
+    //             "answer": "oublièrent",
+    //             "correct": false,
+    //             "position": 4
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   }
+    // };
     const exercises = {
       default: {
         id: 'default-1',
@@ -129,6 +227,8 @@ export const fetchExercise = (subject, studentContext = "", contentType = "multi
         ]
       }
     };
+
+    console.log("exercises", exercises);
 
     const exercice = (exercises[subject] || exercises.default);
     exercice.questions = exercice.questions.map((e, i) => ({

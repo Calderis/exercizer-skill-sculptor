@@ -119,6 +119,7 @@ const ExerciseRenderer = ({
         );
         
       default:
+        console.log("question", question);
         return (
           <div key={question.id} className="p-4 bg-red-100 text-red-800 rounded-md">
             Unknown question type: {question.type}
