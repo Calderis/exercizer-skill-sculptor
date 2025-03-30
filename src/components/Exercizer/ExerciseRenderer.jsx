@@ -138,7 +138,6 @@ const ExerciseRenderer = ({
         );
         
       default:
-        console.log("question", question);
         return (
           <div key={question.id} className="p-4 bg-red-100 text-red-800 rounded-md">
             Unknown question type: {question.type}
@@ -154,8 +153,6 @@ const ExerciseRenderer = ({
   };
 
   const currentQuestion = exercise.questions[currentStep];
-
-  console.log("exercise", exercise);
 
   return (
     <div className="space-y-8">

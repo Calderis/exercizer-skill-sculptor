@@ -201,7 +201,6 @@ export const submitAnswers = (exerciseId, answers) => {
       
       // Fonction pour comparer les réponses en tenant compte de la normalisation
       const compareAnswers = (userAnswer, correctAnswer) => {
-        console.log("compareAnswers", userAnswer, correctAnswer);
         if (typeof userAnswer === 'object' && userAnswer !== null) {
           // Pour les réponses de type objet (MCQ dans le nouveau format, drag_the_words)
           if (Array.isArray(userAnswer)) {
@@ -314,7 +313,7 @@ export const submitAnswers = (exerciseId, answers) => {
                              (userAnswer.text && normalizeText(userAnswer.text) === normalizeText(correctAnswer.text));
                 }
               }
-            } else if (question.type === 'fill_in_the_blanks') {
+            } else if (question.type === 'fill_in_the_blanks' || question.type === 'fill_in_the_blank') {
               // Pour les questions à trous
               // Trouver les réponses correctes (il peut y en avoir plusieurs)
               const correctAnswers = question.answers.filter(a => a.correct === true);

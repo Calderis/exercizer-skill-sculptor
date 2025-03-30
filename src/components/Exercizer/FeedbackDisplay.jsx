@@ -95,7 +95,7 @@ const FeedbackDisplay = ({ evaluation, exercise, userAnswers, onContinue, themeC
     }
     
     // Pour les questions à trous
-    if (question.type === 'fill_in_the_blanks' || question.type === 'fill-in-blank') {
+    if (question.type === 'fill_in_the_blanks' || question.type === 'fill_in_the_blank' || question.type === 'fill-in-blank') {
       const questionText = question.question || question.prompt || '';
       const separator = questionText.includes('$$$') ? '$$$' : '[]';
       const parts = questionText.split(separator);
